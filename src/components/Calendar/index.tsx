@@ -1,6 +1,6 @@
 import { type FC, useState } from 'react';
 import ReactCalendar from 'react-calendar';
-import { add } from 'date-fns';
+import { add, format } from 'date-fns';
 
 interface indexProps {}
 
@@ -15,13 +15,39 @@ const Calendar: FC<indexProps> = ({}) => {
     dateTime: null,
   });
 
- 
+  const getDate = () => {
+    const { justDate } = date;
+
+    if (!justDate) return;
+
+    const beginning = add(justDate, { hours: 9 });
+    const ending = add(justDate, { hours: 17 });
+    const interval = 30; // in minutes
+
+    const times = [];
+    for (let i = beginning; i <= ending; i = add(i, { minutes: interval })) {
+      times.push(i);
+    }
+
+    return times;
+  };
+
+  const times = getDate();
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       {date.justDate ? (
         <div className="flex gap-4">
-          <div className="flex flex-col gap-2"></div>
+          {times?.map((time, i) => (
+            <div key={`time-${i}`} className="rounded-sm bg-gray-100 p-2">
+              <button
+                type="button"
+                onClick={() => setDate((prev) => ({ ...prev, dateTime: time }))}
+              >
+                {format(time, 'kk:mm')}
+              </button>
+            </div>
+          ))}
         </div>
       ) : (
         <ReactCalendar
