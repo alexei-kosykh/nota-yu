@@ -21,8 +21,8 @@ const Login: FC<loginProps> = ({}) => {
   };
 
   const { mutate: login, isError } = api.admin.login.useMutation({
-    onSuccess: () => {
-      router.push("/dashboard");
+    onSuccess: async () => {
+      await router.push("/dashboard");
     },
   });
 

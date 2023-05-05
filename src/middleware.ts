@@ -1,15 +1,19 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { verifyAuth } from "./lib/auth";
 
+// This function can be marked `async` if using `await` inside
 export async function middleware(req: NextRequest) {
-  // get token from user
   const token = req.cookies.get("user-token")?.value;
 
-  // validate if the user is authentificated
+  // validate the user is authenticated
   const verifiedToken =
-    token && (await verifyAuth(token).catch((err) => console.log(err)));
+    token &&
+    (await verifyAuth(token).catch((err) => {
+      console.log(err);
+    }));
 
-  if (req.nextUrl.pathname.startsWith("./login") && !verifiedToken) {
+  if (req.nextUrl.pathname.startsWith("/login") && !verifiedToken) {
     return;
   }
 
@@ -22,6 +26,7 @@ export async function middleware(req: NextRequest) {
   if (!verifiedToken) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
+  return;
 }
 
 export const config = {
