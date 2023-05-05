@@ -20,6 +20,7 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
       message: 'Missing user token',
     });
   }
+
   const verifiedToken = await verifyAuth(token);
 
   if (!verifiedToken) {
@@ -29,10 +30,11 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
     });
   }
 
+  // user is authentificated as admin
   return next();
 });
 
 export const router = t.router;
 
-export const publicProcedure = t.procedure;
 export const adminProcedure = t.procedure.use(isAdmin);
+export const publicProcedure = t.procedure;

@@ -1,7 +1,9 @@
-import Image from 'next/image';
-import { type FC, useState, type ChangeEvent } from 'react';
-import { HiLockClosed } from 'react-icons/hi';
-import { api } from '../utils/api';
+import Image from "next/image";
+import { type FC, useState, type ChangeEvent } from "react";
+import { HiLockClosed } from "react-icons/hi";
+import { api } from "../utils/api";
+import { useRouter } from "next/router";
+
 interface loginProps {}
 
 interface LoginForm {
@@ -10,14 +12,19 @@ interface LoginForm {
 }
 
 const Login: FC<loginProps> = ({}) => {
-  const [input, setInput] = useState<LoginForm>({ email: '', password: '' });
+  const router = useRouter();
+  const [input, setInput] = useState<LoginForm>({ email: "", password: "" });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  const { mutate: login, isError } = api.admin.login.useMutation();
+  const { mutate: login, isError } = api.admin.login.useMutation({
+    onSuccess: () => {
+      router.push("/dashboard");
+    },
+  });
 
   return (
     <div className="flex min-h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
@@ -48,7 +55,7 @@ const Login: FC<loginProps> = ({}) => {
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="-space-y-px rounded-md shadow-sm">
             <p className="pb-1 text-sm text-red-600">
-              {isError && 'Invalid login credentials'}
+              {isError && "Invalid login credentials"}
             </p>
             <div>
               <label htmlFor="email-address" className="sr-only">
@@ -77,7 +84,7 @@ const Login: FC<loginProps> = ({}) => {
                 required
                 className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 placeholder="Password"
-                value={input.password || ''}
+                value={input.password || ""}
                 onChange={handleChange}
               />
             </div>
